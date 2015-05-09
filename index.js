@@ -10,9 +10,22 @@ var SimpleDeck = function() {
   this.cards = cards;
 };
 
-SimpleDeck.prototype.deal = function() {
+SimpleDeck.prototype.dealCard = function() {
   return this.cards.shift();
 };
+
+SimpleDeck.prototype.deal = function(street) {
+  var numCards = {
+    'holeCards': [0,1],
+    'flop': [0,1,2],
+    'turn': [0],
+    'river': [0],
+  }[street];
+  var self = this;
+  return numCards.map(function() {
+    return self.dealCard();
+  });
+}
 
 SimpleDeck.prototype.shuffle = function() {
   var shuffled = [];
@@ -73,9 +86,28 @@ var HoleCards = React.createClass({
   }
 });
 
+var BoardCards = React.createClass({
+  render: function() {
+    var createCard = function(card) {
+      return <Card value={card}/>;
+    };
+    return (
+      <div className="board">
+        {this.props.cards.map(createCard)}
+      </div>
+    );
+  }
+});
+
+
+
 // Main loop
 var deck = new SimpleDeck().shuffle();
 
 React.render(
-  <HoleCards cards={[deck.deal(), deck.deal()]} />, document.getElementById('content')
+  <HoleCards cards={deck.deal('holeCards')} />, document.getElementById('seats')
+);
+
+React.render(
+  <BoardCards cards={deck.deal('flop')} />, document.getElementById('board')
 );
