@@ -15,3 +15,4 @@ html {
 .hearts { color: #FF0000; }
 .spades { color: #000000; }
 
+.pip { width: 1em; text-align: center; }
