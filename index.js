@@ -99,15 +99,73 @@ var BoardCards = React.createClass({
   }
 });
 
+var Board = function() {
+  this.flop = [];
+  this.turn = [];
+  this.river = [];
+};
 
+Board.prototype.dealFlop = function(deck) {
+  this.flop = deck.deal('flop');
+};
+
+Board.prototype.dealTurn = function(deck) {
+  this.turn = deck.deal('turn');
+};
+
+Board.prototype.dealRiver = function(deck) {
+  this.river = deck.deal('river');
+};
+
+Board.prototype.cards = function() {
+  return this.flop.concat(this.turn, this.river);
+};
+
+// DealButton state will be populated from server...
+var DealButton = React.createClass({
+  streets: ['Preflop', 'Flop', 'Turn', 'River'],
+  counter: 0,
+  getInitialState: function() {
+    return {
+      street: this.streets[this.counter]
+    };
+  },
+  handleClick: function() {
+    if (this.state.street == 'Preflop') {
+      initHand();
+      players.forEach(function(player) {
+        React.render(
+          <HoleCards cards={deck.deal('holeCards')} />, document.getElementById('seats')
+        );
+      });
+    } else {
+      var methodName = "deal" + this.state.street;
+      board[methodName](deck);
+      React.render(
+        <BoardCards cards={board.cards()} />,
+        document.getElementById('board')
+      );
+    }
+    this.counter++;
+    this.setState({ street: this.streets[this.counter % 4]});
+  },
+  render: function() {
+    return (
+      <button onClick={this.handleClick}>Deal {this.state.street}</button>
+    );
+  }
+});
+
+function initHand() {
+  deck = new SimpleDeck().shuffle();
+  board = new Board();
+}
 
 // Main loop
-var deck = new SimpleDeck().shuffle();
+var deck, board;
+var players = [1,2];
+initHand();
 
 React.render(
-  <HoleCards cards={deck.deal('holeCards')} />, document.getElementById('seats')
-);
-
-React.render(
-  <BoardCards cards={deck.deal('flop')} />, document.getElementById('board')
+  <DealButton />, document.getElementById('deal-button')
 );
