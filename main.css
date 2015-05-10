@@ -17,3 +17,6 @@ html {
 .spades { color: #000000; }
 
 .pip { width: 1em; text-align: center; }
+
+#board, #seats { height: 170px; width: 600px; }
+.seat { width: 240px; }

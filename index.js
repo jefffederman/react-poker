@@ -141,11 +141,11 @@ var DealButton = React.createClass({
     } else {
       var methodName = "deal" + this.state.street;
       board[methodName](deck);
-      React.render(
-        <BoardCards cards={board.cards()} />,
-        document.getElementById('board')
-      );
     }
+    React.render(
+      <BoardCards cards={board.cards()} />,
+      document.getElementById('board')
+    );
     this.counter++;
     this.setState({ street: this.streets[this.counter % 4]});
   },
