@@ -18,5 +18,5 @@ html {
 
 .pip { width: 1em; text-align: center; }
 
-#board, #seats { height: 170px; width: 600px; }
+.board, .seat { height: 170px; width: 600px; }
 .seat { width: 240px; }

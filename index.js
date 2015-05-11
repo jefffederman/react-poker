@@ -77,10 +77,12 @@ var Card = React.createClass({
 
 var HoleCards = React.createClass({
   render: function() {
+    var createCard = function(card) {
+      return <Card value={card}/>;
+    };
     return(
       <div className="holeCards">
-        <Card value={this.props.cards[0]}/>
-        <Card value={this.props.cards[1]}/>
+        {this.props.cards.map(createCard)}
       </div>
     );
   }
@@ -94,6 +96,20 @@ var BoardCards = React.createClass({
     return (
       <div className="board">
         {this.props.cards.map(createCard)}
+      </div>
+    );
+  }
+});
+
+var Table = React.createClass({
+  render: function() {
+    var makeHoleCards = function(holeCards) {
+      return <HoleCards cards={holeCards} />
+    };
+    return (
+      <div className="table">
+        <BoardCards cards={this.props.boardCards} />
+        {this.props.holeCards.map(makeHoleCards)}
       </div>
     );
   }
@@ -125,6 +141,7 @@ Board.prototype.cards = function() {
 var DealButton = React.createClass({
   streets: ['Preflop', 'Flop', 'Turn', 'River'],
   counter: 0,
+  holeCards: [],
   getInitialState: function() {
     return {
       street: this.streets[this.counter]
@@ -133,18 +150,16 @@ var DealButton = React.createClass({
   handleClick: function() {
     if (this.state.street == 'Preflop') {
       initHand();
-      players.forEach(function(player) {
-        React.render(
-          <HoleCards cards={deck.deal('holeCards')} />, document.getElementById('seats')
-        );
+      this.holeCards = this.props.players.map(function() {
+        return deck.deal('holeCards');
       });
     } else {
       var methodName = "deal" + this.state.street;
       board[methodName](deck);
     }
     React.render(
-      <BoardCards cards={board.cards()} />,
-      document.getElementById('board')
+      <Table holeCards={this.holeCards} boardCards={board.cards()} />,
+      document.getElementById('room')
     );
     this.counter++;
     this.setState({ street: this.streets[this.counter % 4]});
@@ -163,9 +178,12 @@ function initHand() {
 
 // Main loop
 var deck, board;
-var players = [1,2];
 initHand();
 
 React.render(
-  <DealButton />, document.getElementById('deal-button')
+  <DealButton players={[1,2]}/>, document.getElementById('deal-button')
+);
+
+React.render(
+  <Table boardCards={[]} holeCards={[]} />, document.getElementById('room')
 );
