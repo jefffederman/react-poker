@@ -81,7 +81,7 @@ var HoleCards = React.createClass({
       return <Card value={card}/>;
     };
     return(
-      <div className="holeCards">
+      <div className="hole-cards">
         {this.props.cards.map(createCard)}
       </div>
     );
