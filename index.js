@@ -16,13 +16,13 @@ SimpleDeck.prototype.dealCard = function() {
 
 SimpleDeck.prototype.deal = function(street) {
   var numCards = {
-    'holeCards': [0,1],
-    'flop': [0,1,2],
-    'turn': [0],
-    'river': [0],
+    'holeCards': 2,
+    'flop': 3,
+    'turn': 1,
+    'river': 1,
   }[street];
   var self = this;
-  return numCards.map(function() {
+  return _.times(numCards, function() {
     return self.dealCard();
   });
 }
@@ -78,7 +78,7 @@ var Card = React.createClass({
 var HoleCards = React.createClass({
   render: function() {
     var createCard = function(card) {
-      return <Card value={card}/>;
+      return <Card value={card} key={card} />;
     };
     return(
       <div className="hole-cards">
@@ -103,13 +103,13 @@ var BoardCards = React.createClass({
 
 var Table = React.createClass({
   render: function() {
-    var makeHoleCards = function(holeCards) {
-      return <HoleCards cards={holeCards} />
+    var createHoleCards = function(holeCards) {
+      return <HoleCards cards={holeCards} key={holeCards} />
     };
     return (
       <div className="table">
         <BoardCards cards={this.props.boardCards} />
-        {this.props.holeCards.map(makeHoleCards)}
+        {this.props.holeCards.map(createHoleCards)}
       </div>
     );
   }
@@ -150,7 +150,7 @@ var DealButton = React.createClass({
   handleClick: function() {
     if (this.state.street == 'Preflop') {
       initHand();
-      this.holeCards = this.props.players.map(function() {
+      this.holeCards = _.times(this.props.players, function() {
         return deck.deal('holeCards');
       });
     } else {
@@ -171,6 +171,41 @@ var DealButton = React.createClass({
   }
 });
 
+var PlayersCountSelect = React.createClass({
+  handleChange: function() {
+    React.render(
+      <DealButton players={event.target.value}/>, document.getElementById('deal-button')
+    );
+  },
+  render: function() {
+    var createOption = function(i) {
+      var value = i + 1;
+      return <option value={value} key={value}>{{value}}</option>
+    };
+    return (
+      <div className="players-count-select">
+        <select onChange={this.handleChange} defaultValue="2">
+          {_.times(this.props.players, createOption)}
+        </select>
+      </div>
+    );
+  }
+});
+
+var StartButton = React.createClass({
+  handleClick: function() {
+
+  },
+  render: function() {
+    return (
+      <div className="start-button">
+        <PlayersCountSelect players="9" />
+        <button onClick={this.handleClick}>Start Game</button>
+      </div>
+    );
+  }
+})
+
 function initHand() {
   deck = new SimpleDeck().shuffle();
   board = new Board();
@@ -181,7 +216,7 @@ var deck, board;
 initHand();
 
 React.render(
-  <DealButton players={[1,2]}/>, document.getElementById('deal-button')
+  <StartButton />, document.getElementById('start-button')
 );
 
 React.render(
