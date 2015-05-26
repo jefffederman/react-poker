@@ -83,7 +83,7 @@ var DealButton = React.createClass({
         throw new Error('request failed');
       }
       var json = JSON.parse(xhr.response);
-      var holeCards = [json['player1'], json['player2']];
+      var holeCards = json.players.map(function(p) { return p['holeCards']; });
       React.render(
         <DealButton street={json['street']} handId={json['handId']}/>, document.getElementById('deal-button')
       );
