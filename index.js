@@ -51,7 +51,7 @@ var HoleCards = React.createClass({
 var BoardCards = React.createClass({
   render: function() {
     var createCard = function(card) {
-      return <Card value={card}/>;
+      return <Card value={card} key={card}/>;
     };
     return (
       <div className="board">
@@ -76,8 +76,17 @@ var Table = React.createClass({
 });
 
 var DealButton = React.createClass({
+  showWinners: function(json) {
+    if (json['winners']) {
+      var winners = json['winners'].map(function(winner) {
+        return winner['name'] + ' with ' + winner['handType'];
+      }).join(", ");
+      alert('Winners are: ' + winners);
+    }
+  },
   handleClick: function() {
     var xhr = new XMLHttpRequest();
+    var self = this;
     xhr.onload = function() {
       if (xhr.status !== 200) {
         throw new Error('request failed');
@@ -91,6 +100,7 @@ var DealButton = React.createClass({
         <Table holeCards={holeCards} boardCards={json['board']} />,
         document.getElementById('room')
       );
+      self.showWinners(json);
     }
 
     if (this.props.street == 'preflop') {
