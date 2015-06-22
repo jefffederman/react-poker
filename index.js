@@ -5,7 +5,11 @@ var Pip = React.createClass({
       "c": "♣︎",
       "d": "♦︎",
       "h": "♥︎",
-      "s": "♠︎"
+      "s": "♠︎",
+      "♣": "♣︎", // Compatibility with Joker (Golang poker lib)
+      "♦": "♦︎",
+      "♥": "♥︎",
+      "♠": "♠︎",
     }[this.props.value[1]];
 
     return (
@@ -24,7 +28,11 @@ var Card = React.createClass({
       "c": "clubs",
       "d": "diamonds",
       "h": "hearts",
-      "s": "spades"
+      "s": "spades",
+      "♣": "clubs", // Compatibility with Joker (Golang poker lib)
+      "♦": "diamonds",
+      "♥": "hearts",
+      "♠": "spades"
     }[this.props.value[1]];
     classString += suit;
     return (
